@@ -32,12 +32,12 @@ class App:
         self.wait_count = 0
         pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
         pyxel.load('resource.pyxres')
-        self.player = character.Man(15, 20, PLAYER_SIZE, PLAYER_SIZE)
-        self.cpu = character.Man(WINDOW_X-PLAYER_SIZE-15, 20, -PLAYER_SIZE, PLAYER_SIZE)
+        self.player = character.Player(15, 20, PLAYER_SIZE, PLAYER_SIZE, 0)
+        self.enemy = character.Enemy(WINDOW_X-PLAYER_SIZE-15, 20, -PLAYER_SIZE, PLAYER_SIZE, 0)
         self.player_board = character.Board(self.player.x+8, 5)
-        self.cpu_board = character.Board(self.cpu.x+8, 5)
+        self.enemy_board = character.Board(self.enemy.x+8, 5)
         self.player_number = character.Number(self.player_board.x, self.player_board.y)
-        self.cpu_number = character.Number(self.cpu_board.x, self.cpu_board.y)
+        self.enemy_number = character.Number(self.enemy_board.x, self.enemy_board.y)
         self.wait = Wait()
 
         pyxel.run(self.update, self.draw)
@@ -45,31 +45,31 @@ class App:
     def update(self):
         self.frame_count += 1
         self.wait_count = self.frame_count % INTERVAL
-        self.player.update()
-        self.cpu.update()
+        self.player.movement()
+        self.enemy.movement()
         self.player_board.update()
-        self.cpu_board.update()
+        self.enemy_board.update()
         
         if 30 <= self.wait_count <= 120:
             self.wait_flag = True
             self.player_number.update(1, False)
-            self.cpu_number.update(1, False)
+            self.enemy_number.update(1, False)
         else:
             self.wait_flag = False
         self.wait.update(self.wait_count, self.wait_flag)
 
         if self.wait_count == 121:
             self.player_number.update(pyxel.rndi(1, 9), True)
-            self.cpu_number.update(pyxel.rndi(1, 9), True)
+            self.enemy_number.update(pyxel.rndi(1, 9), True)
 
     def draw(self):
         pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)
         self.player.draw()
-        self.cpu.draw()
+        self.enemy.draw()
         self.player_board.draw()
-        self.cpu_board.draw()
+        self.enemy_board.draw()
         self.player_number.draw()
-        self.cpu_number.draw()
+        self.enemy_number.draw()
         self.wait.draw()
 
 
