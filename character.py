@@ -1,17 +1,26 @@
 import pyxel
+from constant import *
 
 class Man:
-    def __init__(self, x, y, w, h, mv, img=0):
+    def __init__(self, x, y, w=MAN_SIZE, h=MAN_SIZE):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        self.mv = 0
+    
+    def update(self, mv):
         self.mv = mv
-        self.img = img
     
     def draw(self):
-        if self.mv == 0:
+        if self.mv == 0:    # ready
             pyxel.blt(self.x, self.y, 0, 0, 0, self.w, self.h, colkey=7)
+        elif self.mv == 1:  # poise
+            pyxel.blt(self.x, self.y, 0, 32, 32, self.w, self.h, colkey=7)
+        elif self.mv == 2:  # attack
+            pyxel.blt(self.x, self.y, 0, 32, 0, self.w, self.h, colkey=7)
+        elif self.mv == 3:  # dodge
+            pyxel.blt(self.x, self.y, 0, 0, 32, self.w, self.h, colkey=7)
         
 
 class Player(Man):

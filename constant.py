@@ -1,0 +1,4 @@
+WINDOW_X = 100
+WINDOW_Y = 60
+MAN_SIZE = 32
+INTERVAL = 150      # 121より大きい数

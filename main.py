@@ -1,10 +1,7 @@
 import pyxel
 import character
+from constant import *
 
-WINDOW_X = 100
-WINDOW_Y = 60
-PLAYER_SIZE = 32
-INTERVAL = 150      # 121より大きい数
 
 class Wait:
     def __init__(self):
@@ -32,8 +29,8 @@ class App:
         self.wait_count = 0
         pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
         pyxel.load('resource.pyxres')
-        self.player = character.Player(15, 20, PLAYER_SIZE, PLAYER_SIZE, 0)
-        self.enemy = character.Enemy(WINDOW_X-PLAYER_SIZE-15, 20, -PLAYER_SIZE, PLAYER_SIZE, 0)
+        self.player = character.Player(15, 20)
+        self.enemy = character.Enemy(WINDOW_X-MAN_SIZE-15, 20, -MAN_SIZE)
         self.player_board = character.Board(self.player.x+8, 5)
         self.enemy_board = character.Board(self.enemy.x+8, 5)
         self.player_number = character.Number(self.player_board.x, self.player_board.y)
