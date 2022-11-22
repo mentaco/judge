@@ -9,7 +9,7 @@ class Man:
         self.h = h
         self.mv = 0
     
-    def update(self, mv):
+    def movement(self, mv):
         self.mv = mv
     
     def draw(self):
@@ -24,13 +24,34 @@ class Man:
         
 
 class Player(Man):
-    def movement(self):
-        pass
+    def movement(self, scene):
+        if scene == 0:
+            self.mv = 0
+        elif scene == 1:
+            self.mv = 1
+        else:
+            if pyxel.btn(pyxel.KEY_K):
+                self.x = ATACK_X
+                self.mv = 2
+            elif pyxel.btn(pyxel.KEY_J):
+                self.x = DODGE_X
+                self.mv = 3
 
 
 class Enemy(Man):
-    def movement(self):
-        pass
+    def movement(self, scene):
+        if scene == 0:
+            self.mv = 0
+        elif scene == 1:
+            self.mv = 1
+        # else:
+        #     if pyxel.btn(pyxel.KEY_K):
+        #         self.x = ATACK_X
+        #         self.mv = 2
+        #     elif pyxel.btn(pyxel.KEY_J):
+        #         self.x = DODGE_X
+        #         self.mv = 3
+        
 
 
 class Board:
