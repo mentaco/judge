@@ -26,8 +26,10 @@ class Man:
 class Player(Man):
     def movement(self, scene):
         if scene == 0:
+            self.x = 15
             self.mv = 0
         elif scene == 1:
+            self.x = 15
             self.mv = 1
         else:
             if pyxel.btn(pyxel.KEY_K):
@@ -72,7 +74,7 @@ class Number:
         self.y = y
         self.flag = False
 
-    def update(self, num, flag):
+    def update(self, flag, num=1):
         self.num = num
         self.flag = flag
 
