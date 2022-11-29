@@ -48,7 +48,7 @@ class App:
         self.wait_count = 0
         self.mv_flag = 0
         self.key_push = 0
-        self.mv_lock = 0
+        self.mv_lock = 1
         self.player_mv = 0
         self.enemy_mv = 0
         self.player = character.Player(PLAYER_X, PLAYER_Y)
@@ -66,35 +66,38 @@ class App:
         self.player_board.update()
         self.enemy_board.update()
         
+        # 待ち状態
         if WAIT_START_TIME <= self.wait_count < WAIT_END_TIME:
             self.num_generate.update()
             self.wait_flag = 1
         else:
             self.wait_flag = 0
 
+        # 数字を生成
         if self.wait_count == WAIT_END_TIME:
             self.num_generate.generate()
             self.mv_flag = 1
             self.mv_lock = 0
         
+        # 入力を受け付け終了
         if self.wait_count == INTERVAL - 10:
             self.mv_flag = 0
+            self.mv_lock = 1
+            self.key_push = 0
         
-        if self.mv_flag:
-            if self.key_push == 0 and WAIT_END_TIME == self.wait_count:
-                self.player_mv = 1
-                self.enemy_mv = 1
-                self.key_push = 1
-            elif not(self.mv_lock) and self.key_push == 1:
-                self.player_mv = 2
-                self.enemy_mv = 2
-                self.mv_lock = 1
+        # プレイヤーからの入力
+        if self.mv_lock:
+            if not self.key_push:
+                self.mv_lock = self.player.movement(0)
+                self.enemy.movement(0)
         else:
-            self.player_mv = 0
-            self.enemy_mv = 0
-             
-        self.player.movement(self.player_mv)
-        self.enemy.movement(self.enemy_mv)
+            if self.key_push:
+                self.mv_lock = self.player.movement(2)
+                self.enemy.movement(2)
+            else:
+                self.mv_lock = self.player.movement(1)
+                self.enemy.movement(1)
+                self.key_push = 1
 
     def draw(self):
         pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)

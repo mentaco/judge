@@ -1,6 +1,7 @@
 import pyxel
 from constant import *
 
+
 class Man:
     def __init__(self, x, y, w=MAN_SIZE, h=MAN_SIZE):
         self.x = x
@@ -8,10 +9,7 @@ class Man:
         self.w = w
         self.h = h
         self.mv = 0
-    
-    def movement(self, mv):
-        self.mv = mv
-    
+
     def draw(self):
         if self.mv == 0:    # ready
             pyxel.blt(self.x, self.y, 0, 0, 0, self.w, self.h, colkey=7)
@@ -21,23 +19,27 @@ class Man:
             pyxel.blt(self.x, self.y, 0, 32, 0, self.w, self.h, colkey=7)
         elif self.mv == 3:  # dodge
             pyxel.blt(self.x, self.y, 0, 0, 32, self.w, self.h, colkey=7)
-        
+
 
 class Player(Man):
-    def movement(self, scene):
+    def movement(self, scene):  # mv_lock を返す
         if scene == 0:
             self.x = 15
             self.mv = 0
+            return 1
         elif scene == 1:
             self.x = 15
             self.mv = 1
+            return 0
         else:
             if pyxel.btn(pyxel.KEY_K):
                 self.x = ATACK_X
                 self.mv = 2
+                return 1
             elif pyxel.btn(pyxel.KEY_J):
                 self.x = DODGE_X
                 self.mv = 3
+                return 1
 
 
 class Enemy(Man):
@@ -53,7 +55,6 @@ class Enemy(Man):
         #     elif pyxel.btn(pyxel.KEY_J):
         #         self.x = DODGE_X
         #         self.mv = 3
-        
 
 
 class Board:
