@@ -30,9 +30,9 @@ class NumberGenerate:
         self.player_number.update(False)
         self.enemy_number.update(False)
     
-    def generate(self):
-        self.player_number.update(True, pyxel.rndi(1, 9))
-        self.enemy_number.update(True, pyxel.rndi(1, 9))
+    def generate(self, player_num, enemy_num):
+        self.player_number.update(True, player_num)
+        self.enemy_number.update(True, enemy_num)
     
     def number_draw(self):
         self.player_number.draw()
@@ -48,11 +48,14 @@ class App:
         self.wait_count = 0
         self.mv_flag = 0
         self.key_push = 0
-        self.mv_lock = 1
+        self.player_mv_lock = 1
+        self.enemy_mv_lock = 1
         self.player_mv = 0
         self.enemy_mv = 0
+        self.player_num = 0
+        self.enemy_num = 0
         self.player = character.Player(PLAYER_X, PLAYER_Y)
-        self.enemy = character.Enemy(WINDOW_X-MAN_SIZE-PLAYER_X, PLAYER_Y, -MAN_SIZE)
+        self.enemy = character.Enemy(ENEMY_X, PLAYER_Y, -MAN_SIZE)
         self.player_board = character.Board(self.player.x+8, 5)
         self.enemy_board = character.Board(self.enemy.x+8, 5)
         self.wait = Wait()
@@ -63,9 +66,7 @@ class App:
     def update(self):
         self.frame_count += 1
         self.wait_count = self.frame_count % INTERVAL
-        self.player_board.update()
-        self.enemy_board.update()
-        
+
         # 待ち状態
         if WAIT_START_TIME <= self.wait_count < WAIT_END_TIME:
             self.num_generate.update()
@@ -75,28 +76,35 @@ class App:
 
         # 数字を生成
         if self.wait_count == WAIT_END_TIME:
-            self.num_generate.generate()
+            self.player_num = pyxel.rndi(1, 9)
+            self.enemy_num = pyxel.rndi(1, 9)
+            if self.player_num > self.enemy_num:
+               self.enemy_mv = 3
+            else:
+                self.enemy_mv = 2 
+            self.num_generate.generate(self.player_num, self.enemy_num)
             self.mv_flag = 1
-            self.mv_lock = 0
-        
+            self.player_mv_lock = 0
+            self.enemy_mv_lock = 0
+
         # 入力を受け付け終了
         if self.wait_count == INTERVAL - 10:
             self.mv_flag = 0
-            self.mv_lock = 1
+            self.player_mv_lock = 1
             self.key_push = 0
-        
+
         # プレイヤーからの入力
-        if self.mv_lock:
+        if self.player_mv_lock or self.enemy_mv_lock:
             if not self.key_push:
-                self.mv_lock = self.player.movement(0)
-                self.enemy.movement(0)
+                self.player_mv_lock = self.player.movement(0)
+                self.enemy_mv_lock = self.enemy.movement(0)
         else:
             if self.key_push:
-                self.mv_lock = self.player.movement(2)
-                self.enemy.movement(2)
-            else:
-                self.mv_lock = self.player.movement(1)
-                self.enemy.movement(1)
+                self.player_mv_lock = self.player.movement(2)
+                self.enemy_mv_lock = self.enemy.movement(self.enemy_mv)
+            else: 
+                self.player_mv_lock = self.player.movement(1)
+                self.enemy_mv_lock = self.enemy.movement(1)
                 self.key_push = 1
 
     def draw(self):

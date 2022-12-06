@@ -24,20 +24,20 @@ class Man:
 class Player(Man):
     def movement(self, scene):  # mv_lock を返す
         if scene == 0:
-            self.x = 15
+            self.x = PLAYER_X
             self.mv = 0
             return 1
         elif scene == 1:
-            self.x = 15
+            self.x = PLAYER_X
             self.mv = 1
             return 0
         else:
             if pyxel.btn(pyxel.KEY_K):
-                self.x = ATACK_X
+                self.x = PLAYER_ATACK_X
                 self.mv = 2
                 return 1
             elif pyxel.btn(pyxel.KEY_J):
-                self.x = DODGE_X
+                self.x = PLAYER_DODGE_X
                 self.mv = 3
                 return 1
 
@@ -45,25 +45,28 @@ class Player(Man):
 class Enemy(Man):
     def movement(self, scene):
         if scene == 0:
+            self.x = ENEMY_X
             self.mv = 0
+            return 1
         elif scene == 1:
+            self.x = ENEMY_X
             self.mv = 1
-        # else:
-        #     if pyxel.btn(pyxel.KEY_K):
-        #         self.x = ATACK_X
-        #         self.mv = 2
-        #     elif pyxel.btn(pyxel.KEY_J):
-        #         self.x = DODGE_X
-        #         self.mv = 3
-
+            return 0
+        else:
+            if pyxel.rndi(1, 19) % 10 == 0:
+                if scene == 2:
+                    self.x = ENEMY_ATACK_X
+                    self.mv = 2
+                    return 1
+                else:
+                    self.x = ENEMY_DODGE_X
+                    self.mv = 3
+                    return 1
 
 class Board:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
-    def update(self):
-        pass
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 80, 16, 16, colkey=7)
