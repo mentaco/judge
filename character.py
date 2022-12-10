@@ -53,7 +53,7 @@ class Enemy(Man):
             self.mv = 1
             return 0
         else:
-            if pyxel.rndi(1, 19) % 10 == 0:
+            if pyxel.rndi(1, 30) % 10 == 0:
                 if scene == 2:
                     self.x = ENEMY_ATACK_X
                     self.mv = 2
@@ -99,3 +99,15 @@ class Arrow:
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 80, 16, 16, colkey=7)
+
+
+class Score:
+    def __init__(self):
+        self.score = 0
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+

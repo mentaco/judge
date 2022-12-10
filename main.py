@@ -46,6 +46,7 @@ class App:
         self.wait_flag = 0
         self.frame_count = 0
         self.wait_count = 0
+        self.mv_count = 0
         self.mv_flag = 0
         self.key_push = 0
         self.player_mv_lock = 1
@@ -76,6 +77,7 @@ class App:
 
         # 数字を生成
         if self.wait_count == WAIT_END_TIME:
+            self.mv_count = 0
             self.player_num = pyxel.rndi(1, 9)
             self.enemy_num = pyxel.rndi(1, 9)
             if self.player_num > self.enemy_num:
@@ -99,9 +101,11 @@ class App:
                 self.player_mv_lock = self.player.movement(0)
                 self.enemy_mv_lock = self.enemy.movement(0)
         else:
+            self.mv_count += 1
             if self.key_push:
                 self.player_mv_lock = self.player.movement(2)
-                self.enemy_mv_lock = self.enemy.movement(self.enemy_mv)
+                if self.mv_count > 20:
+                    self.enemy_mv_lock = self.enemy.movement(self.enemy_mv)
             else: 
                 self.player_mv_lock = self.player.movement(1)
                 self.enemy_mv_lock = self.enemy.movement(1)
