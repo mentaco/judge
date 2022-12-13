@@ -39,7 +39,7 @@ class Player(Man):
             elif pyxel.btn(pyxel.KEY_J):
                 self.x = PLAYER_DODGE_X
                 self.mv = 3
-                return 1
+                return 0
 
 
 class Enemy(Man):
@@ -53,7 +53,7 @@ class Enemy(Man):
             self.mv = 1
             return 0
         else:
-            if pyxel.rndi(1, 30) % 10 == 0:
+            if pyxel.rndi(1, 30) % 7 == 0:
                 if scene == 2:
                     self.x = ENEMY_ATACK_X
                     self.mv = 2
@@ -61,7 +61,7 @@ class Enemy(Man):
                 else:
                     self.x = ENEMY_DODGE_X
                     self.mv = 3
-                    return 1
+                    return 0
 
 class Board:
     def __init__(self, x, y):
@@ -107,11 +107,14 @@ class Score:
         self.x = x
         self.y = y
         self.str = str(self.score)
-    def update(self):
-        pass
+
+    def add_point(self, point):
+        self.score += point
+        self.str = str(self.score)
 
     def draw(self):
         pyxel.text(self.x, self.y, self.str, 0)
+
 
 if __name__ == '__main__':
     class App:
