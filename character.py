@@ -102,12 +102,32 @@ class Arrow:
 
 
 class Score:
-    def __init__(self):
+    def __init__(self, x, y):
         self.score = 0
-
+        self.x = x
+        self.y = y
+        self.str = str(self.score)
     def update(self):
         pass
 
     def draw(self):
-        pass
+        pyxel.text(self.x, self.y, self.str, 0)
 
+if __name__ == '__main__':
+    class App:
+        def __init__(self):
+            pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
+            pyxel.load('resource.pyxres')
+            self.player_score = Score(PLAYER_SCORE_X, PLAYER_SCORE_Y)
+            self.enemy_score = Score(ENEMY_SCORE_X, ENEMY_SCORE_Y)
+            pyxel.run(self.update, self.draw)
+	
+        def update(self):
+            pass
+	
+        def draw(self):
+            pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)
+            self.player_score.draw()
+            self.enemy_score.draw()
+
+    App()
