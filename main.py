@@ -43,6 +43,7 @@ class App:
     def __init__(self):
         pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
         pyxel.load('resource.pyxres')
+        self.scene = SCENE_TITLE
         self.wait_flag = 0
         self.frame_count = 0
         self.wait_count = 0
@@ -67,6 +68,18 @@ class App:
         pyxel.run(self.update, self.draw)
 
     def update(self):
+        if self.scene == SCENE_TITLE:
+            self.update_title()
+        elif self.scene == SCENE_PLAY:
+            self.update_play()
+        elif self.scene == SCENE_END:
+            self.update_end()
+
+    def update_title(self):
+        if pyxel.btnp(pyxel.KEY_RETURN):
+            self.scene = SCENE_PLAY
+
+    def update_play(self):
         self.frame_count += 1
         self.wait_count = self.frame_count % INTERVAL
 
@@ -114,6 +127,19 @@ class App:
                 self.key_push = 1
 
     def draw(self):
+        pyxel.cls(7)
+
+        if self.scene == SCENE_TITLE:
+            self.draw_title()
+        elif self.scene == SCENE_PLAY:
+            self.draw_play()
+        elif self.scene == SCENE_END:
+            self.draw_end()
+
+    def draw_title(self):
+        pyxel.text(WINDOW_X / 2 - 5, WINDOW_Y / 2 - 5, "JUDGE", 0)
+
+    def draw_play(self):
         pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)
         self.player.draw()
         self.enemy.draw()

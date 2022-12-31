@@ -108,9 +108,23 @@ class Score:
         self.y = y
         self.str = str(self.score)
 
+<<<<<<< HEAD
     def add_point(self, point):
         self.score += point
         self.str = str(self.score)
+=======
+    def update(self, flag):
+        if flag == 1:   # 加点
+            self.score += 1
+        elif self.score > 0 and self.score == 2:   # 減点
+            self.score -= 2
+
+    def scoreCheck(self):
+        if self.score == 10:
+            return 1
+        else:
+            return 0
+>>>>>>> dc9e3e2 (シーンの追加)
 
     def draw(self):
         pyxel.text(self.x, self.y, self.str, 0)
