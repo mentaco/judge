@@ -57,14 +57,15 @@ class App:
         self.player_num = 0
         self.enemy_num = 0
         self.player = character.Player(PLAYER_X, PLAYER_Y)
-        self.enemy = character.Enemy(ENEMY_X, ENEMY_Y, -MAN_SIZE)
+        self.enemy = character.Enemy(ENEMY_X, PLAYER_Y, -MAN_SIZE)
         self.player_board = character.Board(self.player.x+8, 5)
         self.enemy_board = character.Board(self.enemy.x+8, 5)
-        self.player_score = character.Score(PLAYER_SCORE_X, PLAYER_SCORE_Y)
-        self.enemy_score = character.Score(ENEMY_SCORE_X, ENEMY_SCORE_Y)
         self.wait = Wait()
         self.num_generate = NumberGenerate(self.player_board.x, self.player_board.y,
                                                 self.enemy_board.x, self.enemy_board.y)
+        self.player_score = character.Score(7, WINDOW_Y - 7)
+        self.enemy_score = character.Score(WINDOW_X - 10, WINDOW_Y - 7)
+	
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -137,7 +138,7 @@ class App:
             self.draw_end()
 
     def draw_title(self):
-        pyxel.text(WINDOW_X / 2 - 5, WINDOW_Y / 2 - 5, "JUDGE", 0)
+        pyxel.text(WINDOW_X / 2 - 10, WINDOW_Y / 2 - 5, "JUDGE", 0)
 
     def draw_play(self):
         pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)
@@ -145,11 +146,11 @@ class App:
         self.enemy.draw()
         self.player_board.draw()
         self.enemy_board.draw()
-        self.player_score.draw()
-        self.enemy_score.draw()
         if self.wait_flag:
             self.wait.arrow_draw(self.wait_count)
         self.num_generate.number_draw()
+        self.player_score.draw()
+        self.enemy_score.draw()
 
 
 App()
