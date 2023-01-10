@@ -22,46 +22,55 @@ class Man:
 
 
 class Player(Man):
-    def movement(self, scene):  # mv_lock を返す
-        if scene == 0:
+    def movement(self, cnd):  # player_mv_lock, player_mv を返す
+        if cnd == 0:
             self.x = PLAYER_X
             self.mv = 0
-            return 1
-        elif scene == 1:
+            return 1, 0
+        elif cnd == 1:
             self.x = PLAYER_X
             self.mv = 1
-            return 0
+            return 0, 1
         else:
             if pyxel.btn(pyxel.KEY_K):
                 self.x = PLAYER_ATACK_X
                 self.mv = 2
-                return 1
+                return 1, 2
             elif pyxel.btn(pyxel.KEY_J):
                 self.x = PLAYER_DODGE_X
                 self.mv = 3
-                return 0
+                return 0, 3
+            
+            return 0, 1
 
 
 class Enemy(Man):
-    def movement(self, scene):
-        if scene == 0:
+    def movement(self, cnd, p_num=0, e_num=0):  # enemy_mv_lock, enemy_mv を返す
+        if cnd == 0:
             self.x = ENEMY_X
             self.mv = 0
-            return 1
-        elif scene == 1:
+            return 1, 0
+        elif cnd == 1:
             self.x = ENEMY_X
             self.mv = 1
-            return 0
+            return 0, 1
         else:
             if pyxel.rndi(1, 30) % 7 == 0:
-                if scene == 2:
+                if p_num < e_num:
+                    cnd = 2
+                elif p_num > e_num:
+                    cnd = 3
+                
+                if cnd == 2:
                     self.x = ENEMY_ATACK_X
                     self.mv = 2
-                    return 1
+                    return 1, 2
                 else:
                     self.x = ENEMY_DODGE_X
                     self.mv = 3
-                    return 0
+                    return 0, 3
+            
+            return 0, 1
 
 class Board:
     def __init__(self, x, y):

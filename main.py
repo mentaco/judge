@@ -96,10 +96,6 @@ class App:
             self.mv_count = 0
             self.player_num = pyxel.rndi(1, 9)
             self.enemy_num = pyxel.rndi(1, 9)
-            if self.player_num > self.enemy_num:
-               self.enemy_mv = 3
-            else:
-                self.enemy_mv = 2 
             self.num_generate.generate(self.player_num, self.enemy_num)
             self.mv_flag = 1
             self.player_mv_lock = 0
@@ -109,22 +105,24 @@ class App:
         if self.wait_count == INTERVAL - 10:
             self.mv_flag = 0
             self.player_mv_lock = 1
+            self.player.mv = 0
+            self.enemy_mv = 0
             self.key_push = 0
 
         # プレイヤーからの入力
         if self.player_mv_lock or self.enemy_mv_lock:
             if not self.key_push:
-                self.player_mv_lock = self.player.movement(0)
-                self.enemy_mv_lock = self.enemy.movement(0)
+                self.player_mv_lock, self.player_mv = self.player.movement(0)
+                self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(0)
         else:
             self.mv_count += 1
             if self.key_push:
-                self.player_mv_lock = self.player.movement(2)
+                self.player_mv_lock, self.player_mv = self.player.movement(2)
                 if self.mv_count > 20:
-                    self.enemy_mv_lock = self.enemy.movement(self.enemy_mv)
+                    self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(2, self.player_num, self.enemy_num)
             else: 
-                self.player_mv_lock = self.player.movement(1)
-                self.enemy_mv_lock = self.enemy.movement(1)
+                self.player_mv_lock, self.player_mv = self.player.movement(1)
+                self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(1)
                 self.key_push = 1
 
     def draw(self):
