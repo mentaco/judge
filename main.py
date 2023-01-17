@@ -47,7 +47,7 @@ class Judgment:
                     return 1, 0
                 elif e_mv == 3:
                     return 0, 1
-            elif p_num == 3:
+            elif p_mv == 3:
                 return -1, 0
         elif p_num < e_num:
             if p_mv == 1:
@@ -77,6 +77,7 @@ class App:
         pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
         pyxel.load('resource.pyxres')
         self.scene = SCENE_TITLE
+        self.text_color = 0
         self.wait_flag = 0
         self.frame_count = 0
         self.wait_count = 0
@@ -85,7 +86,8 @@ class App:
         self.key_push = 0
         self.player_mv_lock_global = 1
         self.player_mv_lock_local = 1
-        self.enemy_mv_lock = 1
+        self.enemy_mv_lock_global = 1
+        self.enemy_mv_lock_local = 1
         self.player_mv = 0
         self.enemy_mv = 0
         self.player_num = 0
@@ -137,12 +139,14 @@ class App:
             self.mv_flag = 1
             self.player_mv_lock_global = 0
             self.player_mv_lock_local = 0
-            self.enemy_mv_lock = 0
+            self.enemy_mv_lock_global = 0
+            self.enemy_mv_lock_local = 0
 
         # 入力を受け付け終了
         if self.wait_count == INTERVAL - 10:
             # スコアの更新
-            self.p_score_flag, self.e_score_flag = self.judgment.judging(self.player_num, self.enemy_num, self.player_mv, self.enemy_mv)
+            self.p_score_flag, self.e_score_flag = self.judgment.judging(self.player_num, self.enemy_num,
+                                                                            self.player_mv, self.enemy_mv)
             self.player_score.update(self.p_score_flag)
             self.enemy_score.update(self.e_score_flag)
 
@@ -156,21 +160,34 @@ class App:
             self.scene = self.judgment.scoreCheck(self.player_score.score, self.enemy_score.score)
 
         # プレイヤーからの入力
-        if self.player_mv_lock_global or self.enemy_mv_lock:
+        if self.player_mv_lock_global or self.enemy_mv_lock_global:
             if not self.key_push:
                 self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(0)
-                self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(0)
+                self.enemy_mv_lock_global, self.enemy_mv_lock_local, self.enemy_mv = self.enemy.movement(0)
         else:
             self.mv_count += 1
             if self.key_push:
                 if not self.player_mv_lock_local:
                     self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(2)
-                if self.mv_count > 20:
-                    self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(2, self.player_num, self.enemy_num)
+                if (not self.enemy_mv_lock_local) and self.mv_count > 20:
+                    self.enemy_mv_lock_global, self.enemy_mv_lock_local, self.enemy_mv = self.enemy.movement(2,
+                                                                                                            self.player_num,
+                                                                                                            self.enemy_num)
             else: 
                 self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(1)
-                self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(1)
+                self.enemy_mv_lock_global, self.enemy_mv_lock_local, self.enemy_mv = self.enemy.movement(1)
                 self.key_push = 1
+    
+    def update_end(self):
+        count = pyxel.frame_count % 40
+
+        if count < 20:
+            if self.scene == SCENE_WIN:
+                self.text_color = 14
+            else:
+                self.text_color = 5
+        else:
+            self.text_color = 7
 
     def draw(self):
         pyxel.cls(7)
@@ -179,7 +196,7 @@ class App:
             self.draw_title()
         elif self.scene == SCENE_PLAY:
             self.draw_play()
-        elif self.scene == SCENE_WIN:
+        elif self.scene == SCENE_WIN or self.scene == SCENE_LOSE:
             self.draw_end()
 
     def draw_title(self):
@@ -199,9 +216,9 @@ class App:
     
     def draw_end(self):
         if self.scene == SCENE_WIN:
-            pyxel.text(WINDOW_X / 2 - 10, WINDOW_Y / 2 - 5, "YOU WIN !", 0)
+            pyxel.text(WINDOW_X / 2 - 14, WINDOW_Y / 2 - 5, "YOU WIN !", self.text_color)
         else:
-            pyxel.text(WINDOW_X / 2 - 10, WINDOW_Y / 2 - 5, "YOU LOSE.", 0)
+            pyxel.text(WINDOW_X / 2 - 17, WINDOW_Y / 2 - 5, "YOU LOSE...", self.text_color)
 
 
 App()

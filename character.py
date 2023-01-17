@@ -26,7 +26,7 @@ class Player(Man):
         if cnd == 0:
             self.x = PLAYER_X
             self.mv = 0
-            return 1, 0, 0
+            return 1, 1, 0
         elif cnd == 1:
             self.x = PLAYER_X
             self.mv = 1
@@ -45,15 +45,15 @@ class Player(Man):
 
 
 class Enemy(Man):
-    def movement(self, cnd, p_num=0, e_num=0):  # enemy_mv_lock, enemy_mv を返す
+    def movement(self, cnd, p_num=0, e_num=0):  # enemy_mv_lock_global, enemy_mv_lock_local, enemy_mv を返す
         if cnd == 0:
             self.x = ENEMY_X
             self.mv = 0
-            return 1, 0
+            return 1, 1, 0
         elif cnd == 1:
             self.x = ENEMY_X
             self.mv = 1
-            return 0, 1
+            return 0, 0, 1
         else:
             if pyxel.rndi(1, 30) % 7 == 0:
                 if p_num < e_num:
@@ -64,13 +64,13 @@ class Enemy(Man):
                 if cnd == 2:
                     self.x = ENEMY_ATACK_X
                     self.mv = 2
-                    return 1, 2
+                    return 1, 0, 2
                 else:
                     self.x = ENEMY_DODGE_X
                     self.mv = 3
-                    return 0, 3
+                    return 0, 1, 3
             
-            return 0, 1
+            return 0, 0, 1
 
 class Board:
     def __init__(self, x, y):
@@ -115,7 +115,6 @@ class Score:
         self.score = 0
         self.x = x
         self.y = y
-        # self.str = str(self.score)
 
     def update(self, flag):
         if flag == 1:   # 加点
@@ -126,23 +125,3 @@ class Score:
     def draw(self):
         self.str = str(self.score)
         pyxel.text(self.x, self.y, self.str, 0)
-
-
-if __name__ == '__main__':
-    class App:
-        def __init__(self):
-            pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
-            pyxel.load('resource.pyxres')
-            self.player_score = Score(PLAYER_SCORE_X, PLAYER_SCORE_Y)
-            self.enemy_score = Score(ENEMY_SCORE_X, ENEMY_SCORE_Y)
-            pyxel.run(self.update, self.draw)
-	
-        def update(self):
-            pass
-	
-        def draw(self):
-            pyxel.bltm(0, 0, 0, 0, 0, WINDOW_X, WINDOW_Y)
-            self.player_score.draw()
-            self.enemy_score.draw()
-
-    App()
