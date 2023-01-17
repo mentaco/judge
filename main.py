@@ -39,6 +39,31 @@ class NumberGenerate:
         self.enemy_number.draw()
 
 
+class Judgment:
+    def judging(self, p_num, e_num, p_mv, e_mv):    # player_score, enemy_score それぞれの flag を返す
+        if p_num > e_num:
+            if p_mv == 2:
+                if  e_mv == 1:
+                    return 1, 0
+                elif e_mv == 3:
+                    return 0, 1
+            elif p_num == 3:
+                return -1, 0
+        elif p_num < e_num:
+            if p_mv == 1:
+                if e_mv == 2 or e_mv == 3:
+                    return 0, 1
+            elif p_mv == 2:
+                return -1, 0
+            elif p_mv == 3:
+                if e_mv == 2:
+                    return 1, 0
+        else:
+            if p_mv == 2:
+                return 1, -1
+        return 0, 0
+
+
 class App:
     def __init__(self):
         pyxel.init(WINDOW_X, WINDOW_Y, title="JUDGE", capture_scale=3, fps=30)
@@ -50,12 +75,15 @@ class App:
         self.mv_count = 0
         self.mv_flag = 0
         self.key_push = 0
-        self.player_mv_lock = 1
+        self.player_mv_lock_global = 1
+        self.player_mv_lock_local = 1
         self.enemy_mv_lock = 1
         self.player_mv = 0
         self.enemy_mv = 0
         self.player_num = 0
         self.enemy_num = 0
+        self.p_score_flag = 0
+        self.e_score_flag = 0
         self.player = character.Player(PLAYER_X, PLAYER_Y)
         self.enemy = character.Enemy(ENEMY_X, PLAYER_Y, -MAN_SIZE)
         self.player_board = character.Board(self.player.x+8, 5)
@@ -65,6 +93,7 @@ class App:
                                                 self.enemy_board.x, self.enemy_board.y)
         self.player_score = character.Score(7, WINDOW_Y - 7)
         self.enemy_score = character.Score(WINDOW_X - 10, WINDOW_Y - 7)
+        self.judgment = Judgment()
 	
         pyxel.run(self.update, self.draw)
 
@@ -98,30 +127,38 @@ class App:
             self.enemy_num = pyxel.rndi(1, 9)
             self.num_generate.generate(self.player_num, self.enemy_num)
             self.mv_flag = 1
-            self.player_mv_lock = 0
+            self.player_mv_lock_global = 0
+            self.player_mv_lock_local = 0
             self.enemy_mv_lock = 0
 
         # 入力を受け付け終了
         if self.wait_count == INTERVAL - 10:
+            # スコアの更新
+            self.p_score_flag, self.e_score_flag = self.judgment.judging(self.player_num, self.enemy_num, self.player_mv, self.enemy_mv)
+            self.player_score.update(self.p_score_flag)
+            self.enemy_score.update(self.e_score_flag)
+
             self.mv_flag = 0
-            self.player_mv_lock = 1
+            self.player_mv_lock_global = 1
+            self.player_mv_lock_local = 1
             self.player.mv = 0
             self.enemy_mv = 0
             self.key_push = 0
 
         # プレイヤーからの入力
-        if self.player_mv_lock or self.enemy_mv_lock:
+        if self.player_mv_lock_global or self.enemy_mv_lock:
             if not self.key_push:
-                self.player_mv_lock, self.player_mv = self.player.movement(0)
+                self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(0)
                 self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(0)
         else:
             self.mv_count += 1
             if self.key_push:
-                self.player_mv_lock, self.player_mv = self.player.movement(2)
+                if not self.player_mv_lock_local:
+                    self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(2)
                 if self.mv_count > 20:
                     self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(2, self.player_num, self.enemy_num)
             else: 
-                self.player_mv_lock, self.player_mv = self.player.movement(1)
+                self.player_mv_lock_global, self.player_mv_lock_local, self.player_mv = self.player.movement(1)
                 self.enemy_mv_lock, self.enemy_mv = self.enemy.movement(1)
                 self.key_push = 1
 

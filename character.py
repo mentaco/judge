@@ -22,26 +22,26 @@ class Man:
 
 
 class Player(Man):
-    def movement(self, cnd):  # player_mv_lock, player_mv を返す
+    def movement(self, cnd):  # player_mv_lock_global, self.player_mv_lock_local, player_mv を返す
         if cnd == 0:
             self.x = PLAYER_X
             self.mv = 0
-            return 1, 0
+            return 1, 0, 0
         elif cnd == 1:
             self.x = PLAYER_X
             self.mv = 1
-            return 0, 1
+            return 0, 0, 1
         else:
             if pyxel.btn(pyxel.KEY_K):
                 self.x = PLAYER_ATACK_X
                 self.mv = 2
-                return 1, 2
+                return 1, 0, 2
             elif pyxel.btn(pyxel.KEY_J):
                 self.x = PLAYER_DODGE_X
                 self.mv = 3
-                return 0, 3
+                return 0, 1, 3
             
-            return 0, 1
+            return 0, 0, 1
 
 
 class Enemy(Man):
@@ -115,21 +115,22 @@ class Score:
         self.score = 0
         self.x = x
         self.y = y
-        self.str = str(self.score)
+        # self.str = str(self.score)
 
     def update(self, flag):
         if flag == 1:   # 加点
             self.score += 1
-        elif self.score > 0 and self.score == 2:   # 減点
-            self.score -= 2
+        elif self.score > 0 and flag == -1:   # 減点
+            self.score -= 1
 
     def scoreCheck(self):
-        if self.score == 10:
+        if self.score == WIN_POINT:
             return 1
         else:
             return 0
 
     def draw(self):
+        self.str = str(self.score)
         pyxel.text(self.x, self.y, self.str, 0)
 
 
