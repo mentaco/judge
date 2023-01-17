@@ -62,6 +62,14 @@ class Judgment:
             if p_mv == 2:
                 return 1, -1
         return 0, 0
+    
+    def scoreCheck(self, p_score, e_score):
+        if p_score >= WIN_POINT:
+            return SCENE_WIN
+        elif e_score >= WIN_POINT:
+            return SCENE_LOSE
+        else:
+            return SCENE_PLAY
 
 
 class App:
@@ -102,7 +110,7 @@ class App:
             self.update_title()
         elif self.scene == SCENE_PLAY:
             self.update_play()
-        elif self.scene == SCENE_END:
+        elif self.scene == SCENE_WIN or self.scene == SCENE_LOSE:
             self.update_end()
 
     def update_title(self):
@@ -145,6 +153,8 @@ class App:
             self.enemy_mv = 0
             self.key_push = 0
 
+            self.scene = self.judgment.scoreCheck(self.player_score.score, self.enemy_score.score)
+
         # プレイヤーからの入力
         if self.player_mv_lock_global or self.enemy_mv_lock:
             if not self.key_push:
@@ -169,7 +179,7 @@ class App:
             self.draw_title()
         elif self.scene == SCENE_PLAY:
             self.draw_play()
-        elif self.scene == SCENE_END:
+        elif self.scene == SCENE_WIN:
             self.draw_end()
 
     def draw_title(self):
@@ -186,6 +196,12 @@ class App:
         self.num_generate.number_draw()
         self.player_score.draw()
         self.enemy_score.draw()
+    
+    def draw_end(self):
+        if self.scene == SCENE_WIN:
+            pyxel.text(WINDOW_X / 2 - 10, WINDOW_Y / 2 - 5, "YOU WIN !", 0)
+        else:
+            pyxel.text(WINDOW_X / 2 - 10, WINDOW_Y / 2 - 5, "YOU LOSE.", 0)
 
 
 App()

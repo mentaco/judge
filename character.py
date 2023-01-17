@@ -123,12 +123,6 @@ class Score:
         elif self.score > 0 and flag == -1:   # 減点
             self.score -= 1
 
-    def scoreCheck(self):
-        if self.score == WIN_POINT:
-            return 1
-        else:
-            return 0
-
     def draw(self):
         self.str = str(self.score)
         pyxel.text(self.x, self.y, self.str, 0)
