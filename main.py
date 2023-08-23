@@ -51,7 +51,7 @@ class Judgment:
                 return -1, 0
         elif p_num < e_num:
             if p_mv == 1:
-                if e_mv == 2 or e_mv == 3:
+                if e_mv == 2:
                     return 0, 1
             elif p_mv == 2:
                 return -1, 0
